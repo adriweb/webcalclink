@@ -1,62 +1,77 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="material.min.css">
-    <script src="material.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>WebUSBTI - PoC</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
+          crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
-<body class="mdl-typography--body-2-force-preferred-font">
+<body>
 
-<div class="mdl-card mdl-cell mdl-cell--12-col">
-    <div class="mdl-card__supporting-text mdl-grid mdl-grid--no-spacing">
-        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
-            <div class="section__circle-container__circle mdl-color--primary"></div>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">WebUSBTI</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/adriweb/webusbti" target="_blank">GitHub repo</a>
+                </li>
+            </ul>
         </div>
-        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-            <h5>WebUSBTI</h5>
-        </div>
-        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
-            <div class="section__circle-container__circle mdl-color--primary"></div>
-        </div>
-        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-        </div>
-        <div class="section__circle-container mdl-cell mdl-cell--2-col mdl-cell--1-col-phone">
-            <div class="section__circle-container__circle mdl-color--primary"></div>
-        </div>
-        <div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
-            <p>
-                In order to use this demo you need to <a href="#" id="lightConnect">Grant this site permission to access it first.</a>
-            </p>
-        </div>
+    </nav>
+</header>
+
+<main role="main" class="container">
+    <div class="mt-3">
+        <h2>WebUSBTI</h2>
     </div>
-</div>
 
-<div id="lightsParent">
-
-    <div id="lightCardTemplate" class="card-square mdl-card mdl-shadow--2dp centered" style="display:none">
-        <div class="lightTitle mdl-card__title mdl-card--expand"></div>
-        <div class="lightStatus mdl-card__supporting-text">
-            <div style="width: 100%; text-align: center;">
-            <span>
-                <button class="mdl-button mdl-button--raised mdl-button--colored" id="send-ready">Send Ready request</button>
-            </span>
-            </div>
-            <div id="history">
-
-            </div>
-        </div>
-    </div>
-</div>
-<div class="section__text mdl-cell mdl-cell--10-col-desktop mdl-cell--6-col-tablet mdl-cell--3-col-phone">
     <p>
-        <a href="https://wicg.github.io/webusb/">WebUSB specification</a>
+        In order to use this PoC you need to <a href="#" id="grantConnect">grant this site permission to access the TI calc(s) first.</a>
     </p>
-</div>
 
+    <div class="card deviceCard" id="deviceCardTemplate">
+        <h4 class="card-header">calc name</h4>
+        <div class="card-body">
+            <p class="card-text deviceDetails">device details here</p>
+            <hr>
+            <div class="deviceActionButtons">
+                <button class="btn btn-primary btn-sm" data-action="ready"><i class="fa fa-check-square-o" aria-hidden="true"></i> Ready</button>
+                <button class="btn btn-primary btn-sm" data-action="getInfo" disabled><i class="fa fa-info-circle" aria-hidden="true"></i> Get info</button>
+                <button class="btn btn-primary btn-sm" data-action="getScreen" disabled><i class="fa fa-camera" aria-hidden="true"></i> Get screen</button>
+                <button class="btn btn-primary btn-sm" data-action="sendKey" disabled><i class="fa fa-list" aria-hidden="true"></i> List files</button>
+                <button class="btn btn-primary btn-sm" data-action="sendKey" disabled><i class="fa fa-upload" aria-hidden="true"></i> Send file...</button>
+                <button class="btn btn-primary btn-sm" data-action="sendKey" disabled><i class="fa fa-keyboard-o" aria-hidden="true"></i> Send key...</button>
+                <button class="btn btn-primary btn-sm" data-action="sendKey" disabled><i class="fa fa-microchip" aria-hidden="true"></i> Dump ROM</button>
+            </div>
+            <hr>
+            <p class="card-text">USB raw frames log:</p>
+            <div class="deviceLog"></div>
+        </div>
+    </div>
+
+    <div id="devicesContainer">
+
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted"><a href="https://wicg.github.io/webusb/">WebUSB specification</a></span>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.1/moment.min.js" integrity="sha256-zG8v+NWiZxmjNi+CvUYnZwKtHzFtdO8cAKUIdB8+U9I=" crossorigin="anonymous"></script>
 <script type="text/javascript" src="webusbti.js"></script>
 
 </body>

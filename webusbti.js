@@ -1,7 +1,8 @@
-const webusb = {};
-
+const deviceCardTemplate = $("#deviceCardTemplate");
+const devicesContainer   = $("#devicesContainer");
 const thinsp = "<span class='thinsp'></span>";
-let lightsParent;
+
+const webusb = {};
 
 function hexStrToArrayBuffer(hexStr)
 {
@@ -101,21 +102,24 @@ function chunk_buffer(data)
     webusb.Device.prototype.transferOut = function (ep, data)
     {
         console.debug(`transferOut\t| ep = ${ep}\t| data = ${data}`);
-
         let str = ""+buf2hex(data);
         str = str.substr(0, 8) + thinsp + str.substr(8, 2) + thinsp + str.substr(10);
-        document.getElementById("history").innerHTML += `<span class='out'>&gt; ${str}</span></br>`;
+        this.gui.log[0].innerHTML += `<span class='out'>${moment().format('HH:mm:ss.SSS')} &gt; ${str}</span></br>`;
+        /************************/
         return this.device_.transferOut(ep, data);
     };
 
     webusb.Device.prototype.transferIn = function (ep, length)
     {
         console.debug(`transferIn\t| ep = ${ep}\t| length = ${length}`);
+        /************************/
         return this.device_.transferIn(ep, length);
     };
 
     webusb.Device.prototype.readySequence = function ()
     {
+        const dev = this;
+
         // array of: [ hexStr, [ number of response bytes... ] ]
         const seq = [
             [ "00000004 01 00000400",                         [ 9 ]     ], // response  0000000402000003ff (9)
@@ -130,7 +134,7 @@ function chunk_buffer(data)
             console.log("dataBufArray received: ", dataBufArray);
             let str = ""+dataBufArray;
             str = str.substr(0, 8) + thinsp + str.substr(8, 2) + thinsp + str.substr(10);
-            document.getElementById("history").innerHTML += `<span class='in'>&lt; ${str}</span></br>`;
+            dev.gui.log[0].innerHTML += `<span class='in'>${moment().format('HH:mm:ss.SSS')} &lt; ${str}</span></br>`;
         }
 
         // todo : compute the length from the first 4 (5 later, actually...) bytes
@@ -164,27 +168,41 @@ function chunk_buffer(data)
 
 function logDeviceStrings(device)
 {
+    console.log(device);
     console.log("Connection:",
         device.device_.manufacturerName,
         device.device_.productName,
         device.device_.serialNumber);
 }
 
-
-function setElementDeviceInfo(e, text)
+function createDeviceGUIIfNeeded(device)
 {
-    e.getElementsByClassName("lightTitle")[0].innerText = text;
-}
+    const newDiv = deviceCardTemplate.clone();
+    newDiv.removeAttr('id');
 
-function connectDevice(device)
-{
-    const e = document.getElementById("lightCardTemplate");
-    e.style.display = "block";
-    device.element = e;
-    const s = device.device_.productName + "\n" + device.device_.serialNumber;
-    setElementDeviceInfo(device.element, s);
+    newDiv.find(".deviceActionButtons > button").each( (idx, btn) => {
+        const $btn = $(btn);
+        switch ($btn.data('action'))
+        {
+            case 'ready':
+                $btn.on('click', () => { device.readySequence() });
+                break;
+        }
 
-    document.getElementById("send-ready").addEventListener('click', readySequence.bind(this, device) );
+    });
+
+    device.gui = {
+        root: newDiv,
+        name: newDiv.find("h4.card-header"),
+        details: newDiv.find("p.deviceDetails"),
+        log: newDiv.find("div.deviceLog"),
+        state: newDiv.find("span.deviceState"),
+        lastActivity: newDiv.find("span.deviceLastActivity")
+    };
+
+    device.gui.name.text(device.device_.productName);
+
+    devicesContainer.append(newDiv);
 }
 
 function handleConnectEvent(event)
@@ -192,8 +210,9 @@ function handleConnectEvent(event)
     const rawDevice = event.device;
     console.log('connect event', rawDevice);
     const device = new webusb.Device(rawDevice);
+    // todo here: get device info/capabilities...
     logDeviceStrings(device);
-    connectDevice(device);
+    createDeviceGUIIfNeeded(device);
 }
 
 function cleanUpDevice(device)
@@ -208,7 +227,7 @@ function disconnectDevice(rawDevice)
     if (device)
     {  // This can fail if the I/O code already threw an exception
         console.log("removing!");
-        lightsParent.removeChild(device.element);
+        devicesContainer.removeChild(device.element);
         device.disconnect()
             .then(s =>
             {
@@ -232,41 +251,28 @@ function registerEventListeners()
 {
     navigator.usb.addEventListener('connect', handleConnectEvent);
     navigator.usb.addEventListener('disconnect', handleDisconnectEvent);
-
 }
+
 function startInitialConnections()
 {
-    webusb.getDevices().then(devices =>
-    {
-        for (const device of devices)
-        {
-            connectDevice(device);
-        }
-    });
+    webusb.getDevices().then( devices => { devices.forEach(createDeviceGUIIfNeeded); } );
 }
 
 function requestConnection(event)
 {
     webusb.requestDevice().then(device =>
     {
-        console.log(device);
-        connectDevice(device);
+        console.log("requestConnection", device);
+        createDeviceGUIIfNeeded(device);
     });
     event.preventDefault();
-}
-
-function readySequence(device)
-{
-    document.getElementById("history").innerHTML = "";
-    device.readySequence();
 }
 
 function start()
 {
     registerEventListeners();
-    document.getElementById("lightConnect").addEventListener("click", requestConnection);
+    $("#grantConnect").on("click", requestConnection);
 
-    lightsParent = document.getElementById("lightsParent");
     startInitialConnections();
 }
 
