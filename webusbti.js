@@ -47,7 +47,11 @@ function chunk_buffer(data)
     webusb.requestDevice = function ()
     {
         const filters = [
-            {vendorId: 0x0451, productId: 0xE008 /*, classCode: 0xFF */}
+            { vendorId: 0x0451, productId: 0xE001 }, // Silverlink
+            { vendorId: 0x0451, productId: 0xE003 }, // 84+...
+            { vendorId: 0x0451, productId: 0xE004 }, // 89T...
+            { vendorId: 0x0451, productId: 0xE008 }, // 84+ SE/CSE/CE...
+            { vendorId: 0x0451, productId: 0xE012 }, // Classic Nspire
         ];
         return navigator.usb.requestDevice({filters: filters}).then(device =>
         {
