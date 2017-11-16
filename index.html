@@ -52,7 +52,15 @@
                 <button class="btn btn-primary btn-sm" data-action="sendKey" disabled><i class="fa fa-microchip" aria-hidden="true"></i> Dump ROM</button>
             </div>
             <hr>
-            <p class="card-text">USB raw frames log:</p>
+            <p class="card-text"><b>USB raw frames log</b>:
+                <span class="pull-right">
+                    <label class="form-check-label">
+                        <input class="form-check-input autoClearLog" type="checkbox">
+                        Auto-clear on action
+                    </label>
+                    &nbsp; <button class="btn btn-outline-danger btn-sm clearLog"><i class="fa fa-trash" aria-hidden="true"></i> Clear</button>
+                </span>
+            </p>
             <div class="deviceLog"></div>
         </div>
     </div>

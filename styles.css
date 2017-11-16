@@ -12,6 +12,10 @@ body > .container {
     margin-bottom: 60px;
 }
 
+.btn:not([disabled]):hover {
+    cursor: pointer;
+}
+
 .footer > .container {
     padding-right: 15px;
     padding-left: 15px;

@@ -184,15 +184,17 @@ function createDeviceGUIIfNeeded(device)
     const newDiv = deviceCardTemplate.clone();
     newDiv.removeAttr('id');
 
+    const autoClearLog = newDiv.find("input.autoClearLog");
+
     newDiv.find(".deviceActionButtons > button").each( (idx, btn) => {
         const $btn = $(btn);
+        $btn.on('click', () => { autoClearLog.is(":checked") && device.gui.log.empty(); } );
         switch ($btn.data('action'))
         {
             case 'ready':
                 $btn.on('click', () => { device.readySequence() });
                 break;
         }
-
     });
 
     device.gui = {
@@ -205,6 +207,8 @@ function createDeviceGUIIfNeeded(device)
     };
 
     device.gui.name.text(device.device_.productName);
+
+    newDiv.find("button.clearLog").on('click', () => { device.gui.log.empty() });
 
     devicesContainer.append(newDiv);
 }
