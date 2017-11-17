@@ -26,6 +26,11 @@ function chunk_buffer(data)
     'use strict';
     webusb.devices = {};
 
+    function makeDeviceIdentStr(rawDevice)
+    {
+        return `${rawDevice.manufacturerName}|${rawDevice.productName}|${rawDevice.serialNumber}`;
+    }
+
     function findOrCreateDevice(rawDevice)
     {
         let device = webusb.getDevice(rawDevice);
@@ -40,7 +45,10 @@ function chunk_buffer(data)
     {
         return navigator.usb.getDevices().then(devices =>
         {
-            return devices.map(device => findOrCreateDevice(device));
+            return devices.map(device => {
+                console.log("webusb.getDevices", device);
+                return findOrCreateDevice(device);
+            });
         });
     };
 
@@ -55,6 +63,7 @@ function chunk_buffer(data)
         ];
         return navigator.usb.requestDevice({filters: filters}).then(device =>
         {
+            console.log("webusb.requestDevice", device);
             return findOrCreateDevice(device);
         });
     };
@@ -62,17 +71,66 @@ function chunk_buffer(data)
     webusb.Device = function (device)
     {
         this.device_ = device;
-        webusb.devices[device.serialNumber] = this;
+        this.identStr = makeDeviceIdentStr(device);
+        webusb.devices[this.identStr] = this;
+
+        this.logDeviceStrings();
+        this.createDeviceGUIIfNeeded();
+
+        // todo here: get device info/capabilities... ?
     };
 
     webusb.deleteDevice = function (device)
     {
-        delete webusb.devices[device.device_.serialNumber];
+        delete webusb.devices[device.identStr];
     };
 
     webusb.getDevice = function (device)
     {
-        return webusb.devices[device.serialNumber];
+        return webusb.devices[makeDeviceIdentStr(device)];
+    };
+
+
+    webusb.Device.prototype.logDeviceStrings = function()
+    {
+        console.log(this.identStr);
+        console.log(this);
+    };
+
+    webusb.Device.prototype.createDeviceGUIIfNeeded = function()
+    {
+        const device = this;
+
+        const newDiv = deviceCardTemplate.clone();
+        newDiv.removeAttr('id');
+
+        const autoClearLog = newDiv.find("input.autoClearLog");
+
+        newDiv.find(".deviceActionButtons > button").each( (idx, btn) => {
+            const $btn = $(btn);
+            $btn.on('click', () => { autoClearLog.is(":checked") && device.gui.log.empty(); } );
+            switch ($btn.data('action'))
+            {
+                case 'ready':
+                    $btn.on('click', () => { device.readySequence() });
+                    break;
+            }
+        });
+
+        this.gui = {
+            root: newDiv,
+            name: newDiv.find("h4.card-header"),
+            details: newDiv.find("p.deviceDetails"),
+            log: newDiv.find("div.deviceLog"),
+            state: newDiv.find("span.deviceState"),
+            lastActivity: newDiv.find("span.deviceLastActivity")
+        };
+
+        this.gui.name.text(this.device_.productName);
+
+        newDiv.find("button.clearLog").on('click', () => { device.gui.log.empty() });
+
+        devicesContainer.append(newDiv);
     };
 
     webusb.Device.prototype.connect = function ()
@@ -144,62 +202,16 @@ function chunk_buffer(data)
 
 })();
 
-function logDeviceStrings(device)
-{
-    console.log(device);
-    console.log("Connection:",
-        device.device_.manufacturerName,
-        device.device_.productName,
-        device.device_.serialNumber);
-}
-
-function createDeviceGUIIfNeeded(device)
-{
-    const newDiv = deviceCardTemplate.clone();
-    newDiv.removeAttr('id');
-
-    const autoClearLog = newDiv.find("input.autoClearLog");
-
-    newDiv.find(".deviceActionButtons > button").each( (idx, btn) => {
-        const $btn = $(btn);
-        $btn.on('click', () => { autoClearLog.is(":checked") && device.gui.log.empty(); } );
-        switch ($btn.data('action'))
-        {
-            case 'ready':
-                $btn.on('click', () => { device.readySequence() });
-                break;
-        }
-    });
-
-    device.gui = {
-        root: newDiv,
-        name: newDiv.find("h4.card-header"),
-        details: newDiv.find("p.deviceDetails"),
-        log: newDiv.find("div.deviceLog"),
-        state: newDiv.find("span.deviceState"),
-        lastActivity: newDiv.find("span.deviceLastActivity")
-    };
-
-    device.gui.name.text(device.device_.productName);
-
-    newDiv.find("button.clearLog").on('click', () => { device.gui.log.empty() });
-
-    devicesContainer.append(newDiv);
-}
 
 function handleConnectEvent(event)
 {
     const rawDevice = event.device;
     console.log('connect event', rawDevice);
-    const device = new webusb.Device(rawDevice);
-    // todo here: get device info/capabilities...
-    logDeviceStrings(device);
-    createDeviceGUIIfNeeded(device);
+    findOrCreateDevice(rawDevice);
 }
 
 function cleanUpDevice(device)
 {
-    clearInterval(device.intervalId);
     webusb.deleteDevice(device);
 }
 
@@ -208,8 +220,7 @@ function disconnectDevice(rawDevice)
     const device = webusb.getDevice(rawDevice);
     if (device)
     {  // This can fail if the I/O code already threw an exception
-        console.log("removing!");
-        devicesContainer.removeChild(device.element);
+        device.gui.root.remove();
         device.disconnect()
             .then(s =>
             {
@@ -235,28 +246,14 @@ function registerEventListeners()
     navigator.usb.addEventListener('disconnect', handleDisconnectEvent);
 }
 
-function startInitialConnections()
-{
-    webusb.getDevices().then( devices => { devices.forEach(createDeviceGUIIfNeeded); } );
-}
-
 function requestConnection(event)
 {
-    webusb.requestDevice().then(device =>
-    {
-        console.log("requestConnection", device);
-        createDeviceGUIIfNeeded(device);
-    });
+    webusb.requestDevice();
     event.preventDefault();
 }
 
-function start()
-{
+$(function(){
     registerEventListeners();
     $("#grantConnect").on("click", requestConnection);
-
-    startInitialConnections();
-}
-
-document.addEventListener('DOMContentLoaded', start, false);
-
+    webusb.getDevices();
+});
