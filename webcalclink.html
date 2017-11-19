@@ -44,8 +44,12 @@
 </footer>
 
 <script type="module">
-    import { calc_84p } from './libcalcs/calc_84p'
-    console.log(calc_84p);
+    import Calc_84P from './libcalcs/calc_84p'
+
+    const my84p = new Calc_84P();
+    console.log(my84p);
+
+    my84p.is_ready();
 </script>
 
 </body>

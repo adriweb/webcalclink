@@ -27,8 +27,7 @@ import { BackupContent, FileAttr, FileContent, FlashContent, VarEntry, VarReques
 
 import { Cable } from "../libcables/libcables";
 
-
-class _calc_84p extends Calc
+export default class Calc_84P extends Calc
 {
     readonly model       = CalcModel.CALC_TI84P;
     readonly name        = "TI84+";
@@ -41,15 +40,6 @@ class _calc_84p extends Calc
                         Feat.FTS_SILENT  | Feat.FTS_MEMFREE | Feat.FTS_FLASH;
 
     readonly product_id = CalcProductIDs.PRODUCT_ID_TI84P;
-
-    updat: CalcUpdate;
-    buffer: any;
-    buffer2: any;
-    is_open: number;
-    is_busy: number;
-    cable: Cable;
-    attached: boolean;
-    priv: PrivCalcHandleDataType;
 
     readonly counters =
     [
@@ -85,7 +75,8 @@ class _calc_84p extends Calc
     ];
 
     is_ready() {
-
+        console.log("is_ready");
+        return false;
     };
 
     send_key(key: number) {
@@ -200,7 +191,5 @@ class _calc_84p extends Calc
 
     }
 }
-
-export const calc_84p = new _calc_84p();
 
 console.log("calc_84p loaded");

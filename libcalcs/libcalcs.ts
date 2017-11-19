@@ -18,7 +18,7 @@
 *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-import { VarRequest, FileContent, BackupContent, FlashContent, FlashContent, FileAttr } from '../libfiles/libfiles';
+import { VarRequest, VarEntry, FileContent, BackupContent, FlashContent, FlashContent, FileAttr } from '../libfiles/libfiles';
 import { Cable, CableModel, CablePort } from '../libcables/libcables';
 
 
@@ -655,7 +655,7 @@ export abstract class Calc
 
     abstract is_ready            () : boolean;
     abstract send_key            (key: number) : void;
-    abstract execute             (varEntry: any /*VarEntry*/, args: string) : number;
+    abstract execute             (varEntry: VarEntry, args: string) : number;
     abstract recv_screen         (sc: CalcScreenCoord) : number[][];
     abstract get_dirlist         () : object; /* { vars, apps } */
     abstract get_memfree         () : object; /* { ram, flash } */
