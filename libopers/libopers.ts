@@ -18,38 +18,57 @@
 *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-import { CableHandle } from '../libcables/libcables';
-import { CalcHandle } from '../libcalcs/libcalcs';
+import { Cable } from '../libcables/libcables';
+import { Calc, DeviceOptions } from '../libcalcs/libcalcs';
 
 class opers
 {
-    sendReadySequence()
+    private cable: Cable | null;
+    private calc: Calc | null;
+    private options: DeviceOptions;
+    private cable_attached: boolean;
+    private calc_attached: boolean;
+
+    cable_attach(cable: Cable)
     {
-        console.debug("sendReadySequence");
+        this.options.cable_model = cable.model;
+        this.options.cable_port = cable.port;
+        this.cable = cable;
+        this.cable_attached = true;
     }
+    cable_detach()
+    {
+        this.cable = null;
+        this.cable_attached = false;
+    }
+    cable_get() { return this.cable; }
 
-    /**
-     * @param cableHandle
-     */
-    cable_attach(cableHandle: CableHandle) {}
-    cable_detach() {}
-    cable_get() {}
-
-    /**
-     * @param calcHandle
-     */
-    calc_attach(calcHandle: CalcHandle) {}
-    calc_detach() {}
-    calc_get() {}
+    calc_attach(calc: Calc)
+    {
+        this.options.calc_model = calc.model;
+        this.calc = calc;
+        this.calc_attached = true;
+    }
+    calc_detach()
+    {
+        this.calc = null;
+        this.calc_attached = false;
+    }
+    calc_get() { return this.calc; }
 
     device_open() {}
     device_close() {}
     device_reset() {}
-    device_probe(result, bla) {}
+    device_probe() {}
 
     recv_idlist() {}
     dump_rom(size: number, filename: string) {}
     get_infos() {}
+
+    sendReadySequence()
+    {
+        console.debug("sendReadySequence");
+    }
 
     static format_bytes(value: number)
     {
