@@ -1,3 +1,6 @@
+# TypeScript built js files
+lib*/*.js
+
 # Logs
 logs
 *.log

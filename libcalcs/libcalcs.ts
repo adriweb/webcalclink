@@ -18,8 +18,8 @@
 *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-import { FileContent, BackupContent, FlashContent, FlashContent, FileAttr } from '../libfiles/libfiles';
-import { CableModel, CableModel, Cableport } from '../libcables/libcables';
+import { VarRequest, FileContent, BackupContent, FlashContent, FlashContent, FileAttr } from '../libfiles/libfiles';
+import { Cable, CableModel, CablePort } from '../libcables/libcables';
 
 
 // Name of the root node for 'Variables' & 'Applications' tree
@@ -538,78 +538,6 @@ export type CalcInfos =
     color_screen: number;
 }
 
-/**
- * CalcFncts:
- * @model: link cable model (CalcModel).
- * @name: name of hand-held like "TI89"
- * @fullname: complete name of hand-held like "TI-89"
- * @description: description of hand-held like "TI89 calculator"
- * @features: supported operations (CalcOperations)
- * @counters: defines which CalcUpdate counters have to be refreshed (indexed by CalcFnctsIdx)
- * @is_ready: check whether calculator is ready
- * @send_key: send key value
- * @execute: remotely execute a program or application
- * @recv_screen: request a screendump
- * @get_dirlist: request a listing of variables, folders (if any) and apps (if any)
- * @send_backup: send a backup
- * @recv_backup: request a backup
- * @send_var: send a variable (silent mode)
- * @recv_var: request a variable silent mode)
- * @send_var_ns: send a variable (non-silent mode)
- * @recv_var_ns: receive a variable (non-silent mode)
- * @send_flash: send a FLASH app/os
- * @recv_flash: request a FLASH app/os
- * @recv_idlist: request hand-held IDLIST
- * @dump_rom_1: dump the hand-held ROM: send dumper (if any)
- * @dump_rom_2: dump the hand-held ROM: launch dumper
- * @set_clock: set date/time
- * @get_clock: get date/time
- * @del_var: delete variable
- * @new_fld: create new folder (if supported)
- * @get_version: returns Boot code & OS version
- * @send_cert: send certificate stuff
- * @recv_cert: receive certificate stuff
- * @rename_var: rename a variable
- * @change_attr: change attributes of a variable
- * @send_all_vars_backup: send a fake backup (set of files and FlashApps)
- * @recv_all_vars_backup: request a fake backup (set of files and FlashApps)
- *
- * A structure used for handling a hand-held.
- * !!! This structure is for private use !!!
- **/
-export type CalcFncts =
-{
-    is_ready             : () => boolean;
-    send_key             : (key: number) => void;
-    execute              : (varEntry: any /*VarEntry*/, args: string) => number;
-    recv_screen          : (sc: CalcScreenCoord) => number[][];
-    get_dirlist          : () => object; /* { vars, apps } */
-    get_memfree          : () => object; /* { ram, flash } */
-    send_backup          : (content: BackupContent) => void;
-    recv_backup          : () => BackupContent;
-    send_var             : (mode: CalcMode, content: FileContent) => void;
-    recv_var             : (mode: CalcMode) => object; /* { FileContent, VarRequest } */
-    send_var_ns          : (mode: CalcMode, content: FileContent) => void;
-    recv_var_ns          : (mode: CalcMode,) => object; /* { FileContent, VarEntry } */
-    send_app             : (content: FlashContent) => void;
-    recv_app             : (content: FlashContent) => VarRequest;
-    send_os              : (content: FlashContent) => void;
-    recv_idlist          : () => number[];
-    dump_rom_1           : () => void;
-    dump_rom_2           : (size: CalcDumpSize, filename: string) => void;
-    set_clock            : (clock: CalcClock) => void;
-    get_clock            : () => CalcClock;
-    del_var              : (vr: VarRequest) => void;
-    new_fld              : (vr: VarRequest) => void;
-    get_version          : () => CalcInfos;
-    send_cert            : (content: FlashContent) => void;
-    recv_cert            : () => FlashContent;
-    rename_var           : (oldname: VarRequest, newname: VarRequest) => void;
-    change_attr          : (vr: VarRequest, attr: FileAttr) => void;
-    send_all_vars_backup : (content: FileContent) => void;
-    recv_all_vars_backup : () => FileContent;
-}
-
 export type PrivCalcHandleDataType = {
     dusb_rpkt_maxlen: number; // max length of data in raw packet
     progress_blk_size: number; // refresh pbars every once in a while.
@@ -623,42 +551,6 @@ export type PrivCalcHandleDataType = {
     nsp_seq: number;
     nsp_src_port: number;
     nsp_dst_port: number;
-}
-
-/**
- * CalcHandle:
- * @model: cable model
- * @calc: calculator functions
- * @update: callbacks for GUI interaction
- * @unused1: unused member kept for API compatibility purposes
- * @buffer: allocated data buffer for internal use
- * @buffer2: allocated data buffer for internal use
- * @open: device has been opened
- * @busy: transfer is in progress
- * @cable: handle on cable used with this model
- * @attached: set if a cable has been attached
- * @priv: private per-handle data
- *
- * A structure used to store information as a handle.
- * !!! This structure is for private use !!!
- **/
-export type CalcHandle =
-{
-    model: CalcModel;
-    calc:  CalcFncts;
-    updat: CalcUpdate;
-
-    unused1: any;
-    buffer:  any;
-    buffer2: any;
-
-    open : number;
-    busy : number;
-
-    cable: CableHandle;
-    attached: number;
-
-    priv: PrivCalcHandleDataType;
 }
 
 /**
@@ -689,16 +581,107 @@ export enum CalcModel
     CALC_TI84PC, CALC_TI84PC_USB, CALC_TI83PCE_USB, CALC_TI84PCE_USB, CALC_TI82A_USB, CALC_TI84PT_USB, CALC_MAX
 }
 
-export abstract class AbstractCalc
+/**
+ * @model: link cable model (CalcModel).
+ * @name: name of hand-held like "TI89"
+ * @fullname: complete name of hand-held like "TI-89"
+ * @description: description of hand-held like "TI89 calculator"
+ * @features: supported operations (CalcOperations)
+ * @counters: defines which CalcUpdate counters have to be refreshed (indexed by CalcFnctsIdx)
+ *
+ * @updat: callbacks for GUI interaction
+ *
+ * @buffer: allocated data buffer for internal use
+ * @buffer2: allocated data buffer for internal use
+ *
+ * @is_open: device has been opened
+ * @is_busy: transfer is in progress
+ *
+ * @cable: handle on cable used with this model
+ * @attached: set if a cable has been attached
+ *
+ * @priv: private per-handle data
+ *
+ * @is_ready: check whether calculator is ready
+ * @send_key: send key value
+ * @execute: remotely execute a program or application
+ * @recv_screen: request a screendump
+ * @get_dirlist: request a listing of variables, folders (if any) and apps (if any)
+ * @send_backup: send a backup
+ * @recv_backup: request a backup
+ * @send_var: send a variable (silent mode)
+ * @recv_var: request a variable silent mode)
+ * @send_var_ns: send a variable (non-silent mode)
+ * @recv_var_ns: receive a variable (non-silent mode)
+ * @send_flash: send a FLASH app/os
+ * @recv_flash: request a FLASH app/os
+ * @recv_idlist: request hand-held IDLIST
+ * @dump_rom_1: dump the hand-held ROM: send dumper (if any)
+ * @dump_rom_2: dump the hand-held ROM: launch dumper
+ * @set_clock: set date/time
+ * @get_clock: get date/time
+ * @del_var: delete variable
+ * @new_fld: create new folder (if supported)
+ * @get_version: returns Boot code & OS version
+ * @send_cert: send certificate stuff
+ * @recv_cert: receive certificate stuff
+ * @rename_var: rename a variable
+ * @change_attr: change attributes of a variable
+ * @send_all_vars_backup: send a fake backup (set of files and FlashApps)
+ * @recv_all_vars_backup: request a fake backup (set of files and FlashApps)
+ */
+export abstract class Calc
 {
-    abstract model: CalcModel;
-    abstract name: string;
-    abstract fullname: string;
-    abstract description: string;
-    abstract features: number;
-    abstract product_id: CalcProductIDs;
-    abstract counters: string[];
-    abstract functions: CalcFncts;
+    readonly abstract model: CalcModel;
+    readonly abstract name: string;
+    readonly abstract fullname: string;
+    readonly abstract description: string;
+    readonly abstract features: number;
+    readonly abstract product_id: CalcProductIDs;
+    readonly abstract counters: string[];
+
+    updat: CalcUpdate;
+
+    buffer:  any;
+    buffer2: any;
+
+    is_open: number;
+    is_busy: number;
+
+    cable: Cable;
+    attached: boolean;
+
+    priv: PrivCalcHandleDataType;
+
+    abstract is_ready            () : boolean;
+    abstract send_key            (key: number) : void;
+    abstract execute             (varEntry: any /*VarEntry*/, args: string) : number;
+    abstract recv_screen         (sc: CalcScreenCoord) : number[][];
+    abstract get_dirlist         () : object; /* { vars, apps } */
+    abstract get_memfree         () : object; /* { ram, flash } */
+    abstract send_backup         (content: BackupContent) : void;
+    abstract recv_backup         () : BackupContent;
+    abstract send_var            (mode: CalcMode, content: FileContent) : void;
+    abstract recv_var            (mode: CalcMode) : object; /* { FileContent, VarRequest } */
+    abstract send_var_ns         (mode: CalcMode, content: FileContent) : void;
+    abstract recv_var_ns         (mode: CalcMode) : object; /* { FileContent, VarEntry } */
+    abstract send_app            (content: FlashContent) : void;
+    abstract recv_app            (content: FlashContent) : VarRequest;
+    abstract send_os             (content: FlashContent) : void;
+    abstract recv_idlist         () : number[];
+    abstract dump_rom_1          () : void;
+    abstract dump_rom_2          (size: CalcDumpSize, filename: string) : void;
+    abstract set_clock           (clock: CalcClock) : void;
+    abstract get_clock           () : CalcClock;
+    abstract del_var             (vr: VarRequest) : void;
+    abstract new_fld             (vr: VarRequest) : void;
+    abstract get_version         () : CalcInfos;
+    abstract send_cert           (content: FlashContent) : void;
+    abstract recv_cert           () : FlashContent;
+    abstract rename_var          (oldname: VarRequest, newname: VarRequest) : void;
+    abstract change_attr         (vr: VarRequest, attr: FileAttr) : void;
+    abstract send_all_vars_backup(content: FileContent) : void;
+    abstract recv_all_vars_backup() : FileContent;
 }
 
 console.log("libcalcs loaded");
