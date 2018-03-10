@@ -44,7 +44,7 @@ function findOrCreateDevice(rawDevice)
         return navigator.usb.getDevices().then(devices =>
         {
             return devices.map(device => {
-                console.log("webusb.getDevices", device);
+                console.log("webusb.getDevices | device chosen: ", device);
                 return findOrCreateDevice(device);
             });
         });
@@ -54,10 +54,10 @@ function findOrCreateDevice(rawDevice)
     {
         const filters = [
             { vendorId: 0x0451, productId: 0xE001 }, // Silverlink
-            { vendorId: 0x0451, productId: 0xE003 }, // 84+...
+            { vendorId: 0x0451, productId: 0xE003 }, // 84+
             { vendorId: 0x0451, productId: 0xE004 }, // 89T...
             { vendorId: 0x0451, productId: 0xE008 }, // 84+ SE/CSE/CE...
-            { vendorId: 0x0451, productId: 0xE012 }, // Classic Nspire
+            { vendorId: 0x0451, productId: 0xE012 }, // Nspire (all models)
         ];
         return navigator.usb.requestDevice({filters: filters}).then(device =>
         {
@@ -131,17 +131,11 @@ function findOrCreateDevice(rawDevice)
         devicesContainer.append(newDiv);
     };
 
-    webusb.Device.prototype.connect = function ()
+    webusb.Device.prototype.connect = async function ()
     {
-        return this.device_.open()
-            .then(() =>
-            {
-                if (this.device_.configuration === null)
-                {
-                    return this.device_.selectConfiguration(1);
-                }
-            })
-            .then(() => this.device_.claimInterface(0));
+        await this.device_.open();
+        await this.device_.selectConfiguration(1);
+        await this.device_.claimInterface(this.device_.configuration.interfaces[0].interfaceNumber);
     };
 
     webusb.Device.prototype.disconnect = function ()
