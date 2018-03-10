@@ -135,7 +135,20 @@ function findOrCreateDevice(rawDevice)
     {
         await this.device_.open();
         await this.device_.selectConfiguration(1);
-        await this.device_.claimInterface(this.device_.configuration.interfaces[0].interfaceNumber);
+
+        const iface = this.device_.configuration.interfaces[0];
+        await this.device_.claimInterface(iface.interfaceNumber);
+
+        const epOut = iface.alternate.endpoints.filter((ep) => ep.direction === "out")[0];
+        const epIn  = iface.alternate.endpoints.filter((ep) => ep.direction === "in")[0];
+
+        this.config = {
+            interface: iface,
+            outEPnum: epOut.endpointNumber,
+            inEPnum : epIn.endpointNumber,
+            outPacketSize: epOut.packetSize,
+            inPacketSize : epIn.packetSize
+        };
     };
 
     webusb.Device.prototype.disconnect = function ()
@@ -150,18 +163,18 @@ function findOrCreateDevice(rawDevice)
         str = str.substr(0, 8) + thinsp + str.substr(8, 2) + thinsp + str.substr(10);
         this.gui.log[0].innerHTML += `<span class='out'>${moment().format('HH:mm:ss.SSS')} &gt; ${str}</span></br>`;
         /************************/
-        return this.device_.transferOut(2, data);
+        return this.device_.transferOut(this.config.outEPnum, data);
     };
 
-    webusb.Device.prototype.transferInWithLen = function (length)
+    webusb.Device.prototype.transferInWithLen = function(length)
     {
         console.debug(`transferInWithLen\t| length = ${length}`);
-        return this.device_.transferIn(1, length);
+        return this.device_.transferIn(this.config.inEPnum, length);
     };
 
     webusb.Device.prototype.transferIn = function ()
     {
-        return this.transferInWithLen(64);
+        return this.transferInWithLen(this.config.inPacketSize);
     };
 
     webusb.Device.prototype.responseHandler = function(result)
