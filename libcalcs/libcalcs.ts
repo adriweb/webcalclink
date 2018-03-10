@@ -18,7 +18,7 @@
 *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-import { VarRequest, VarEntry, FileContent, BackupContent, FlashContent, FlashContent, FileAttr } from '../libfiles/libfiles';
+import { VarRequest, VarEntry, FileContent, BackupContent, FlashContent, FileAttr } from '../libfiles/libfiles';
 import { Cable, CableModel, CablePort } from '../libcables/libcables';
 
 
@@ -632,13 +632,13 @@ export enum CalcModel
  */
 export abstract class Calc
 {
-    readonly abstract model: CalcModel;
-    readonly abstract name: string;
-    readonly abstract fullname: string;
-    readonly abstract description: string;
-    readonly abstract features: number;
-    readonly abstract product_id: CalcProductIDs;
-    readonly abstract counters: string[];
+    abstract readonly model: CalcModel;
+    abstract readonly name: string;
+    abstract readonly fullname: string;
+    abstract readonly description: string;
+    abstract readonly features: number;
+    abstract readonly product_id: CalcProductIDs;
+    abstract readonly counters: string[];
 
     updat: CalcUpdate;
 
