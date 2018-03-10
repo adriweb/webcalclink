@@ -20,26 +20,24 @@ function chunk_buffer(data)
     // todo
 }
 
+function findOrCreateDevice(rawDevice)
+{
+    let device = webusb.getDevice(rawDevice);
+    if (device === undefined)
+    {
+        device = new webusb.Device(rawDevice);
+    }
+    return device;
+}
 
 (function ()
 {
     'use strict';
     webusb.devices = {};
 
-    function makeDeviceIdentStr(rawDevice)
-    {
+    const makeDeviceIdentStr = (rawDevice) => {
         return `${rawDevice.manufacturerName}|${rawDevice.productName}|${rawDevice.serialNumber}`;
-    }
-
-    function findOrCreateDevice(rawDevice)
-    {
-        let device = webusb.getDevice(rawDevice);
-        if (device === undefined)
-        {
-            device = new webusb.Device(rawDevice);
-        }
-        return device;
-    }
+    };
 
     webusb.getDevices = function ()
     {
