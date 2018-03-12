@@ -112,6 +112,9 @@ function findOrCreateDevice(rawDevice)
                 case 'ready':
                     $btn.on('click', () => { device.readySequence() });
                     break;
+                case 'exitPTT':
+                    $btn.on('click', () => { device.exitPTT() });
+                    break;
             }
         });
 
@@ -193,6 +196,28 @@ function findOrCreateDevice(rawDevice)
                 [ "00000004 01 00000400",                         1 ], // response  0000000402000003ff (9)
                 [ "00000010 04 0000000a0001000300010000000007D0", 2 ], // responses 0000000205e000 (7) and 0000000a04000000040012000007D0 (15)
                 [ "00000002 05 e000",                             0 ]
+            ];
+            for (const frame of seq)
+            {
+                await this.transferOut(hexStrToArrayBuffer(frame[0]));
+                for (let i=0; i<frame[1]; i++) {
+                    await this.transferIn().then(this.responseHandler.bind(this));
+                }
+            }
+        })
+        .then(() => this.disconnect());
+    };
+
+    webusb.Device.prototype.exitPTT = function ()
+    {
+        this.connect().then(async () =>
+        {
+            // array of: [ hexStr, readCountAfter ]
+            const seq = [
+                [ "54fd64004003640140031343040001fb6401ff00",             0 ], // addr assign
+                [ "54fd640080016401409031ab0a00015200000004010000000000", 1 ], // remote mgmt, exit ptt
+                [ "54fd640080016401409031ab0a00015200000004010000000000", 1 ], // twice because invalid seq first
+                [ "54fd640080016401409027230a0001c000000006010000000000", 1 ]  // reset (fixme, probably bad seq/sum)
             ];
             for (const frame of seq)
             {
