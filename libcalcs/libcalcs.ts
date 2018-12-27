@@ -538,21 +538,6 @@ export type CalcInfos =
     color_screen: number;
 }
 
-export type PrivCalcHandleDataType = {
-    dusb_rpkt_maxlen: number; // max length of data in raw packet
-    progress_blk_size: number; // refresh pbars every once in a while.
-    progress_min_size: number; // don't refresh if packet is smaller than some amount.
-    romdump_std_blk: number; // number of full-size blocks
-    romdump_sav_blk: number; // number of compressed blocks
-    dusb_vtl_pkt_list: any;
-    dusb_cpca_list: any;
-    nsp_vtl_pkt_list: any;
-    nsp_seq_pc: number;
-    nsp_seq: number;
-    nsp_src_port: number;
-    nsp_dst_port: number;
-}
-
 /**
  * DeviceOptions:
  * @cable_model: model
@@ -640,31 +625,44 @@ export abstract class Calc
     abstract readonly product_id: CalcProductIDs;
     abstract readonly counters: string[];
 
-    updat: CalcUpdate;
+    updat: CalcUpdate   = <any>undefined;
 
-    buffer:  any;
-    buffer2: any;
+    buffer:  any        = undefined;
+    buffer2: any        = undefined;
 
-    is_open: number;
-    is_busy: number;
+    is_open: boolean    = false;
+    is_busy: boolean    = false;
 
-    cable: Cable;
-    attached: boolean;
+    cable: Cable | undefined;
+    attached: boolean   = false;
 
-    priv: PrivCalcHandleDataType;
+    priv: {
+        dusb_rpkt_maxlen: number;  // max length of data in raw packet
+        progress_blk_size: number; // refresh pbars every once in a while.
+        progress_min_size: number; // don't refresh if packet is smaller than some amount.
+        romdump_std_blk: number;   // number of full-size blocks
+        romdump_sav_blk: number;   // number of compressed blocks
+        dusb_vtl_pkt_list: any;
+        dusb_cpca_list: any;
+        nsp_vtl_pkt_list: any;
+        nsp_seq_pc: number;
+        nsp_seq: number;
+        nsp_src_port: number;
+        nsp_dst_port: number;
+    } = <any>{};
 
     abstract is_ready            () : boolean;
     abstract send_key            (key: number) : void;
-    abstract execute             (varEntry: VarEntry, args: string) : number;
+    abstract execute             (varEntry: VarEntry, args: string) : void;
     abstract recv_screen         (sc: CalcScreenCoord) : number[][];
-    abstract get_dirlist         () : object; /* { vars, apps } */
-    abstract get_memfree         () : object; /* { ram, flash } */
+    abstract get_dirlist         () : ({ vars: any, apps: any });
+    abstract get_memfree         () : ({ ram: any, flash: any });
     abstract send_backup         (content: BackupContent) : void;
     abstract recv_backup         () : BackupContent;
     abstract send_var            (mode: CalcMode, content: FileContent) : void;
-    abstract recv_var            (mode: CalcMode) : object; /* { FileContent, VarRequest } */
+    abstract recv_var            (mode: CalcMode) : ({ content: FileContent, vr: VarRequest });
     abstract send_var_ns         (mode: CalcMode, content: FileContent) : void;
-    abstract recv_var_ns         (mode: CalcMode) : object; /* { FileContent, VarEntry } */
+    abstract recv_var_ns         (mode: CalcMode) : ({ content: FileContent, vr: VarEntry });
     abstract send_app            (content: FlashContent) : void;
     abstract recv_app            (content: FlashContent) : VarRequest;
     abstract send_os             (content: FlashContent) : void;

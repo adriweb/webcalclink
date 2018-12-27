@@ -240,28 +240,28 @@ type ticables_post_recv_hook_type = (buffer: Uint8Array, len: number) => void;
  **/
 export abstract class Cable
 {
-    readonly model: CableModel;
-    readonly name: string;
-    readonly fullname: string;
-    readonly description: string;
+    abstract readonly model: CableModel;
+    abstract readonly name: string;
+    abstract readonly fullname: string;
+    abstract readonly description: string;
 
-    need_open: boolean;
+    need_open: boolean      = false;
 
-    port: CablePort;
-    timeout_val: number;
-    delay: number;
+    port: CablePort         = CablePort.PORT_0;
+    timeout_val: number     = DFLT_TIMEOUT;
+    delay: number           = DFLT_DELAY;
 
-    device: string;
-    address: number;
+    device: string          = "";
+    address: number         = 0;
 
-    rate: DataRate;
+    rate: DataRate          = <any>undefined;
 
-    priv: any;
-    priv2: any;
-    priv3: any;
+    priv: any               = undefined;
+    priv2: any              = undefined;
+    priv3: any              = undefined;
 
-    is_open: boolean;
-    is_busy: boolean;
+    is_open: boolean        = false;
+    is_busy: boolean        = false;
 
     abstract prepare() : void;
     abstract open() : void;
@@ -281,9 +281,9 @@ export abstract class Cable
     abstract set_device(device: string) : void;
     abstract get_device_info() : CableDeviceInfo;
 
-    abstract pre_send_hook: ticables_pre_send_hook_type;
+    abstract pre_send_hook:  ticables_pre_send_hook_type;
     abstract post_send_hook: ticables_post_send_hook_type;
-    abstract pre_recv_hook: ticables_pre_recv_hook_type;
+    abstract pre_recv_hook:  ticables_pre_recv_hook_type;
     abstract post_recv_hook: ticables_post_recv_hook_type;
 }
 

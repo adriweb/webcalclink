@@ -23,11 +23,11 @@ import { Calc, DeviceOptions } from '../libcalcs/libcalcs';
 
 class opers
 {
-    private cable: Cable | null;
-    private calc: Calc | null;
-    private options: DeviceOptions;
-    private cable_attached: boolean;
-    private calc_attached: boolean;
+    private cable: Cable | undefined;
+    private calc: Calc | undefined;
+    private options: DeviceOptions   = <any>undefined;
+    private cable_attached: boolean  = false;
+    private calc_attached: boolean   = false;
 
     cable_attach(cable: Cable)
     {
@@ -38,7 +38,7 @@ class opers
     }
     cable_detach()
     {
-        this.cable = null;
+        this.cable = undefined;
         this.cable_attached = false;
     }
     cable_get() { return this.cable; }
@@ -51,7 +51,7 @@ class opers
     }
     calc_detach()
     {
-        this.calc = null;
+        this.calc = undefined;
         this.calc_attached = false;
     }
     calc_get() { return this.calc; }
