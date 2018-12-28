@@ -188,39 +188,6 @@ export default class Calc_84P extends Generic_84P
                         Feat.FTS_SILENT  | Feat.FTS_MEMFREE | Feat.FTS_FLASH;
 
     readonly product_id = CalcProductIDs.PRODUCT_ID_TI84P;
-
-    readonly counters =
-    [
-        "",     /* is_ready */
-        "",     /* send_key */
-        "",     /* execute */
-        "1P",   /* recv_screen */
-        "1L",   /* get_dirlist */
-        "",     /* get_memfree */
-        "1P",   /* send_backup */
-        "",     /* recv_backup */
-        "2P1L", /* send_var */
-        "1P1L", /* recv_var */
-        "",     /* send_var_ns */
-        "",     /* recv_var_ns */
-        "2P1L", /* send_app */
-        "2P1L", /* recv_app */
-        "2P",   /* send_os */
-        "1L",   /* recv_idlist */
-        "2P",   /* dump_rom_1 */
-        "2P",   /* dump_rom_2 */
-        "",     /* set_clock */
-        "",     /* get_clock */
-        "1L",   /* del_var */
-        "1L",   /* new_folder */
-        "",     /* get_version */
-        "1L",   /* send_cert */
-        "1L",   /* recv_cert */
-        "",     /* rename */
-        "",     /* chattr */
-        "2P",   /* send_all_vars_backup */
-        "2P",   /* recv_all_vars_backup */
-    ];
 }
 
 // TODO: add more calcs

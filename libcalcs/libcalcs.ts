@@ -568,7 +568,6 @@ export enum CalcModel
  * @fullname: complete name of hand-held like "TI-89"
  * @description: description of hand-held like "TI89 calculator"
  * @features: supported operations (CalcOperations)
- * @counters: defines which CalcUpdate counters have to be refreshed (indexed by CalcFnctsIdx)
  *
  * @updat: callbacks for GUI interaction
  *
@@ -619,7 +618,6 @@ export abstract class Calc
     abstract readonly description: string;
     abstract readonly features: number;
     abstract readonly product_id: CalcProductIDs;
-    abstract readonly counters: string[];
 
     updat: CalcUpdate   = <any>undefined;
 
