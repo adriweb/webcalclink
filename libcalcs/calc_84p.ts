@@ -19,15 +19,134 @@
 */
 
 import {
-    Calc, CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock,
-    CalcUpdate, PrivCalcHandleDataType
+    Calc, CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock, CalcUpdate, CalcInfos
 } from './libcalcs';
 
-import { BackupContent, FileAttr, FileContent, FlashContent, VarEntry, VarRequest } from "../libfiles/libfiles";
+import {
+    BackupContent, FileAttr, FileContent, FlashContent, VarEntry, VarRequest
+} from "../libfiles/libfiles";
 
-import { Cable } from "../libcables/libcables";
+import {
+    Cable
+} from '../libcables/libcables';
 
-export default class Calc_84P extends Calc
+// TODO: implement me
+abstract class Generic_84P extends Calc
+{
+    change_attr(vr: VarRequest, attr: FileAttr): void {
+    }
+
+    del_var(vr: VarRequest): void {
+    }
+
+    dump_rom_1(): void {
+    }
+
+    dump_rom_2(size: CalcDumpSize, filename: string): void {
+    }
+
+    execute(varEntry: VarEntry, args: string): void {
+    }
+
+    get_clock(): CalcClock {
+        return <any>undefined;
+    }
+
+    get_dirlist(): { vars: any; apps: any } {
+        return {
+            apps: undefined,
+            vars: undefined
+        };
+    }
+
+    get_memfree(): { ram: any; flash: any } {
+        return {
+            flash: undefined,
+            ram: undefined
+        };
+    }
+
+    get_version(): CalcInfos {
+        return <any>undefined;
+    }
+
+    is_ready(): boolean {
+        return false;
+    }
+
+    new_fld(vr: VarRequest): void {
+    }
+
+    recv_all_vars_backup(): FileContent {
+        return <any>undefined;
+    }
+
+    recv_app(content: FlashContent) {
+        return <any>undefined;
+    }
+
+    recv_backup(): BackupContent {
+        return <any>undefined;
+    }
+
+    recv_cert(): FlashContent {
+        return <any>undefined;
+    }
+
+    recv_idlist(): number[] {
+        return [];
+    }
+
+    recv_screen(sc: CalcScreenCoord): number[][] {
+        return [];
+    }
+
+    recv_var(mode: CalcMode): { content: FileContent; vr: VarRequest } {
+        return {
+            content: undefined,
+            vr: undefined
+        };
+    }
+
+    recv_var_ns(mode: CalcMode): { content: FileContent; vr: VarRequest } {
+        return {
+            content: undefined,
+            vr: undefined
+        };
+    }
+
+    rename_var(oldname: VarRequest, newname: VarRequest): void {
+    }
+
+    send_all_vars_backup(content: FileContent): void {
+    }
+
+    send_app(content: FlashContent): void {
+    }
+
+    send_backup(content: BackupContent): void {
+    }
+
+    send_cert(content: FlashContent): void {
+    }
+
+    send_key(key: number): void {
+    }
+
+    send_os(content: FileContent): void {
+    }
+
+    send_var(mode: CalcMode, conten: FileContent): void {
+    }
+
+    send_var_ns(mode: CalcMode, content: FileContent): void {
+    }
+
+    set_clock(clock: CalcClock): void {
+    }
+}
+
+export default class Calc_84P extends Generic_84P
 {
     readonly model       = CalcModel.CALC_TI84P;
     readonly name        = "TI84+";
@@ -73,123 +192,8 @@ export default class Calc_84P extends Calc
         "2P",   /* send_all_vars_backup */
         "2P",   /* recv_all_vars_backup */
     ];
-
-    is_ready() {
-        console.log("is_ready");
-        return false;
-    };
-
-    send_key(key: number) {
-
-    };
-
-    execute(varEntry: VarEntry, args: string) {
-
-    };
-
-    recv_screen(sc: CalcScreenCoord) {
-
-    };
-
-    get_dirlist() {
-
-    };
-
-    get_memfree() {
-
-    };
-
-    send_backup(content: BackupContent) {
-
-    };
-
-    recv_backup() {
-
-    };
-
-    send_var(mode: CalcMode, content: FileContent) {
-
-    };
-
-    recv_var(mode: CalcMode) {
-
-    };
-
-    send_var_ns(mode: CalcMode, content: FileContent) {
-
-    };
-
-    recv_var_ns(mode: CalcMode) {
-
-    };
-
-    send_app(content: FlashContent) {
-
-    };
-
-    recv_app(content: FlashContent) {
-
-    };
-
-    send_os(content: FlashContent) {
-
-    };
-
-    recv_idlist() {
-
-    };
-
-    dump_rom_1() {
-
-    };
-
-    dump_rom_2(size: CalcDumpSize, filename: string) {
-
-    };
-
-    set_clock(clock: CalcClock) {
-
-    };
-
-    get_clock() {
-
-    };
-
-    del_var(vr: VarRequest) {
-
-    };
-
-    new_fld(vr: VarRequest) {
-
-    };
-
-    get_version() {
-
-    };
-
-    send_cert(content: FlashContent) {
-
-    };
-
-    recv_cert() {
-
-    };
-
-    rename_var(oldname: VarRequest, newname: VarRequest) {
-
-    };
-
-    change_attr(vr: VarRequest, attr: FileAttr) {
-
-    };
-
-    send_all_vars_backup(content: FileContent) {
-
-    };
-
-    recv_all_vars_backup() {
-
-    }
 }
 
-console.log("calc_84p loaded");
+// TODO: add more calcs
+
+console.log("libcalcs/calc_84p loaded");
