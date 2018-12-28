@@ -47,10 +47,10 @@ export enum CalcScreenFormat
  */
 export enum CalcPixelFormat
 {
-    CALC_PIXFMT_MONO = 1,         // Monochrome (1 bpp)
-    CALC_PIXFMT_GRAY_4 = 2,       // Grayscale (4 bpp - Nspire)
-    CALC_PIXFMT_RGB_565_LE = 3,   // RGB (16 bpp little-endian - Nspire CX / 84+CSE / 83PCE / 84+CE)
-    CALC_PIXFMT_RGB_5_6_5 = 3     // Ditto
+    CALC_PIXFMT_MONO        = 1,    // Monochrome (1 bpp)
+    CALC_PIXFMT_GRAY_4      = 2,    // Grayscale (4 bpp - Nspire)
+    CALC_PIXFMT_RGB_565_LE  = 3,    // RGB (16 bpp little-endian - Nspire CX / 84+CSE / 83PCE / 84+CE)
+    CALC_PIXFMT_RGB_5_6_5   = 3     // Ditto
 }
 
 /**
@@ -72,8 +72,8 @@ export enum CalcPathType
 export enum CalcMemType
 {
     MEMORY_NONE = 0,
-    MEMORY_FREE = (1<<0),
-    MEMORY_USED = (1<<1),
+    MEMORY_FREE = (1 << 0),
+    MEMORY_USED = (1 << 1),
 }
 
 // To clean-up !
@@ -250,7 +250,7 @@ export enum InfosMask
  **/
 export enum CalcFnctsIdx
 {
-    FNCT_IS_READY=0,
+    FNCT_IS_READY = 0,
     FNCT_SEND_KEY,
     FNCT_EXECUTE,
     FNCT_RECV_SCREEN,
@@ -300,7 +300,7 @@ export enum TigMode
 }
 
 //! Size of the header of a \a DUSBRawPacket
-export const DUSB_HEADER_SIZE = (4+1);
+export const DUSB_HEADER_SIZE = (4 + 1);
 
 /**
  * DUSBRawPacket:
@@ -311,7 +311,6 @@ export type DUSBRawPacket =
 {
    size: number;       ///< raw packet size
    type: number;       ///< raw packet type
-
    data: number[];     ///< raw packet data
 }
 
@@ -337,7 +336,6 @@ export type NSPRawPacket =
     ack: number;
     seq: number;
     hdr_sum: number;
-
     data: number[]; // size = NSP_DATA_SIZE
 }
 
@@ -355,13 +353,10 @@ export type NSPRawPacket =
 export type CalcScreenCoord =
 {
     format: number;
-
     width: number;
     height: number;
-
     clipped_width: number;
     clipped_height: number;
-
     pixel_format: CalcPixelFormat;
 }
 
@@ -563,7 +558,8 @@ export enum CalcModel
     CALC_TI73, CALC_TI82, CALC_TI83, CALC_TI83P, CALC_TI84P, CALC_TI85, CALC_TI86,
     CALC_TI89, CALC_TI89T, CALC_TI92, CALC_TI92P, CALC_V200,
     CALC_TI84P_USB, CALC_TI89T_USB, CALC_NSPIRE, CALC_TI80,
-    CALC_TI84PC, CALC_TI84PC_USB, CALC_TI83PCE_USB, CALC_TI84PCE_USB, CALC_TI82A_USB, CALC_TI84PT_USB, CALC_MAX
+    CALC_TI84PC, CALC_TI84PC_USB, CALC_TI83PCE_USB, CALC_TI84PCE_USB, CALC_TI82A_USB, CALC_TI84PT_USB,
+    CALC_MAX
 }
 
 /**
@@ -651,35 +647,35 @@ export abstract class Calc
         nsp_dst_port: number;
     } = <any>{};
 
-    abstract is_ready            () : boolean;
-    abstract send_key            (key: number) : void;
-    abstract execute             (varEntry: VarEntry, args: string) : void;
-    abstract recv_screen         (sc: CalcScreenCoord) : number[][];
-    abstract get_dirlist         () : ({ vars: any, apps: any });
-    abstract get_memfree         () : ({ ram: any, flash: any });
-    abstract send_backup         (content: BackupContent) : void;
-    abstract recv_backup         () : BackupContent;
-    abstract send_var            (mode: CalcMode, content: FileContent) : void;
-    abstract recv_var            (mode: CalcMode) : ({ content: FileContent, vr: VarRequest });
-    abstract send_var_ns         (mode: CalcMode, content: FileContent) : void;
-    abstract recv_var_ns         (mode: CalcMode) : ({ content: FileContent, vr: VarEntry });
-    abstract send_app            (content: FlashContent) : void;
-    abstract recv_app            (content: FlashContent) : VarRequest;
-    abstract send_os             (content: FlashContent) : void;
-    abstract recv_idlist         () : number[];
-    abstract dump_rom_1          () : void;
-    abstract dump_rom_2          (size: CalcDumpSize, filename: string) : void;
-    abstract set_clock           (clock: CalcClock) : void;
-    abstract get_clock           () : CalcClock;
-    abstract del_var             (vr: VarRequest) : void;
-    abstract new_fld             (vr: VarRequest) : void;
-    abstract get_version         () : CalcInfos;
-    abstract send_cert           (content: FlashContent) : void;
-    abstract recv_cert           () : FlashContent;
-    abstract rename_var          (oldname: VarRequest, newname: VarRequest) : void;
-    abstract change_attr         (vr: VarRequest, attr: FileAttr) : void;
-    abstract send_all_vars_backup(content: FileContent) : void;
-    abstract recv_all_vars_backup() : FileContent;
+    abstract is_ready(): boolean;
+    abstract send_key(key: number): void;
+    abstract execute(varEntry: VarEntry, args: string): void;
+    abstract recv_screen(sc: CalcScreenCoord): number[][];
+    abstract get_dirlist(): ({ vars: any, apps: any });
+    abstract get_memfree(): ({ ram: any, flash: any });
+    abstract send_backup(content: BackupContent): void;
+    abstract recv_backup(): BackupContent;
+    abstract send_var(mode: CalcMode, content: FileContent): void;
+    abstract recv_var(mode: CalcMode): ({ content: FileContent, vr: VarRequest });
+    abstract send_var_ns(mode: CalcMode, content: FileContent): void;
+    abstract recv_var_ns(mode: CalcMode): ({ content: FileContent, vr: VarEntry });
+    abstract send_app(content: FlashContent): void;
+    abstract recv_app(content: FlashContent): VarRequest;
+    abstract send_os(content: FlashContent): void;
+    abstract recv_idlist(): number[];
+    abstract dump_rom_1(): void;
+    abstract dump_rom_2(size: CalcDumpSize, filename: string): void;
+    abstract set_clock(clock: CalcClock): void;
+    abstract get_clock(): CalcClock;
+    abstract del_var(vr: VarRequest): void;
+    abstract new_fld(vr: VarRequest): void;
+    abstract get_version(): CalcInfos;
+    abstract send_cert(content: FlashContent): void;
+    abstract recv_cert(): FlashContent;
+    abstract rename_var(oldname: VarRequest, newname: VarRequest): void;
+    abstract change_attr(vr: VarRequest, attr: FileAttr): void;
+    abstract send_all_vars_backup(content: FileContent): void;
+    abstract recv_all_vars_backup(): FileContent;
 }
 
 console.log("libcalcs loaded");

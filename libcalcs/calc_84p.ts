@@ -33,116 +33,145 @@ import {
 // TODO: implement me
 abstract class Generic_84P extends Calc
 {
-    change_attr(vr: VarRequest, attr: FileAttr): void {
+    change_attr(vr: VarRequest, attr: FileAttr): void
+    {
     }
 
-    del_var(vr: VarRequest): void {
+    del_var(vr: VarRequest): void
+    {
     }
 
-    dump_rom_1(): void {
+    dump_rom_1(): void
+    {
     }
 
-    dump_rom_2(size: CalcDumpSize, filename: string): void {
+    dump_rom_2(size: CalcDumpSize, filename: string): void
+    {
     }
 
-    execute(varEntry: VarEntry, args: string): void {
+    execute(varEntry: VarEntry, args: string): void
+    {
     }
 
-    get_clock(): CalcClock {
+    get_clock(): CalcClock
+    {
         return <any>undefined;
     }
 
-    get_dirlist(): { vars: any; apps: any } {
+    get_dirlist(): { vars: any; apps: any }
+    {
         return {
             apps: undefined,
             vars: undefined
         };
     }
 
-    get_memfree(): { ram: any; flash: any } {
+    get_memfree(): { ram: any; flash: any }
+    {
         return {
             flash: undefined,
             ram: undefined
         };
     }
 
-    get_version(): CalcInfos {
+    get_version(): CalcInfos
+    {
         return <any>undefined;
     }
 
-    is_ready(): boolean {
+    is_ready(): boolean
+    {
         return false;
     }
 
-    new_fld(vr: VarRequest): void {
+    new_fld(vr: VarRequest): void
+    {
     }
 
-    recv_all_vars_backup(): FileContent {
+    recv_all_vars_backup(): FileContent
+    {
         return <any>undefined;
     }
 
-    recv_app(content: FlashContent) {
+    recv_app(content: FlashContent)
+    {
         return <any>undefined;
     }
 
-    recv_backup(): BackupContent {
+    recv_backup(): BackupContent
+    {
         return <any>undefined;
     }
 
-    recv_cert(): FlashContent {
+    recv_cert(): FlashContent
+    {
         return <any>undefined;
     }
 
-    recv_idlist(): number[] {
+    recv_idlist(): number[]
+    {
         return [];
     }
 
-    recv_screen(sc: CalcScreenCoord): number[][] {
+    recv_screen(sc: CalcScreenCoord): number[][]
+    {
         return [];
     }
 
-    recv_var(mode: CalcMode): { content: FileContent; vr: VarRequest } {
+    recv_var(mode: CalcMode): { content: FileContent; vr: VarRequest }
+    {
         return {
             content: undefined,
             vr: undefined
         };
     }
 
-    recv_var_ns(mode: CalcMode): { content: FileContent; vr: VarRequest } {
+    recv_var_ns(mode: CalcMode): { content: FileContent; vr: VarRequest }
+    {
         return {
             content: undefined,
             vr: undefined
         };
     }
 
-    rename_var(oldname: VarRequest, newname: VarRequest): void {
+    rename_var(oldname: VarRequest, newname: VarRequest): void
+    {
     }
 
-    send_all_vars_backup(content: FileContent): void {
+    send_all_vars_backup(content: FileContent): void
+    {
     }
 
-    send_app(content: FlashContent): void {
+    send_app(content: FlashContent): void
+    {
     }
 
-    send_backup(content: BackupContent): void {
+    send_backup(content: BackupContent): void
+    {
     }
 
-    send_cert(content: FlashContent): void {
+    send_cert(content: FlashContent): void
+    {
     }
 
-    send_key(key: number): void {
+    send_key(key: number): void
+    {
     }
 
-    send_os(content: FileContent): void {
+    send_os(content: FileContent): void
+    {
     }
 
-    send_var(mode: CalcMode, conten: FileContent): void {
+    send_var(mode: CalcMode, conten: FileContent): void
+    {
     }
 
-    send_var_ns(mode: CalcMode, content: FileContent): void {
+    send_var_ns(mode: CalcMode, content: FileContent): void
+    {
     }
 
-    set_clock(clock: CalcClock): void {
+    set_clock(clock: CalcClock): void
+    {
     }
 }
 

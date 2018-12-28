@@ -18,7 +18,6 @@
 *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 export const DFLT_TIMEOUT = 15;    /* 1.5 second */
 export const DFLT_DELAY   = 10;    /* 10 micro-seconds */
 
@@ -47,7 +46,8 @@ export enum CableModel
 export enum CablePort
 {
     PORT_0 = 0,
-    PORT_1, PORT_FIRST = PORT_1, PORT_2, PORT_3, PORT_4, PORT_MAX
+    PORT_1, PORT_FIRST = PORT_1, PORT_2, PORT_3, PORT_4,
+    PORT_MAX
 }
 
 /**
@@ -73,8 +73,8 @@ export enum UsbPid
 export enum CableStatus
 {
     STATUS_NONE = 0,
-    STATUS_RX = 1,
-    STATUS_TX = 2,
+    STATUS_RX   = 1,
+    STATUS_TX   = 2,
 }
 
 /**
@@ -177,11 +177,11 @@ export type DataRate =
  **/
 export type CableOptions =
 {
-    model: CableModel;
-    port:  CablePort;
+    model:   CableModel;
+    port:    CablePort;
     timeout: number;
-    delay: number;
-    calc: number; // unused
+    delay:   number;
+    calc:    number; // unused
 }
 
 type ticables_pre_send_hook_type  = (buffer: Uint8Array, len: number) => void;

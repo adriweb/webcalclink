@@ -36,12 +36,17 @@ class opers
         this.cable = cable;
         this.cable_attached = true;
     }
+
     cable_detach()
     {
         this.cable = undefined;
         this.cable_attached = false;
     }
-    cable_get() { return this.cable; }
+
+    cable_get()
+    {
+        return this.cable;
+    }
 
     calc_attach(calc: Calc)
     {
@@ -49,21 +54,45 @@ class opers
         this.calc = calc;
         this.calc_attached = true;
     }
+
     calc_detach()
     {
         this.calc = undefined;
         this.calc_attached = false;
     }
-    calc_get() { return this.calc; }
 
-    device_open() {}
-    device_close() {}
-    device_reset() {}
-    device_probe() {}
+    calc_get()
+    {
+        return this.calc;
+    }
 
-    recv_idlist() {}
-    dump_rom(size: number, filename: string) {}
-    get_infos() {}
+    device_open()
+    {
+    }
+
+    device_close()
+    {
+    }
+
+    device_reset()
+    {
+    }
+
+    device_probe()
+    {
+    }
+
+    recv_idlist()
+    {
+    }
+
+    dump_rom(size: number, filename: string)
+    {
+    }
+
+    get_infos()
+    {
+    }
 
     sendReadySequence()
     {
