@@ -33,6 +33,11 @@ import {
 // TODO: implement me
 abstract class Generic_84P extends Calc
 {
+    readonly features = Feat.OPS_ISREADY | Feat.OPS_SCREEN  | Feat.OPS_DIRLIST | Feat.OPS_VARS   | Feat.OPS_FLASH  |
+                        Feat.OPS_OS      | Feat.OPS_IDLIST  | Feat.OPS_ROMDUMP | Feat.OPS_CLOCK  | Feat.OPS_DELVAR |
+                        Feat.OPS_VERSION | Feat.OPS_BACKUP  | Feat.OPS_KEYS    | Feat.OPS_RENAME | Feat.OPS_CHATTR |
+                        Feat.FTS_SILENT  | Feat.FTS_MEMFREE | Feat.FTS_FLASH;
+
     change_attr(vr: VarRequest, attr: FileAttr): void
     {
     }
@@ -84,9 +89,8 @@ abstract class Generic_84P extends Calc
         return false;
     }
 
-    new_fld(vr: VarRequest): void
-    {
-    }
+    // Not supported by those models
+    new_fld = <any>undefined;
 
     recv_all_vars_backup(): FileContent
     {
@@ -98,15 +102,11 @@ abstract class Generic_84P extends Calc
         return <any>undefined;
     }
 
-    recv_backup(): BackupContent
-    {
-        return <any>undefined;
-    }
+    // Not supported by those models
+    recv_backup = <any>undefined;
 
-    recv_cert(): FlashContent
-    {
-        return <any>undefined;
-    }
+    // Not supported by those models
+    recv_cert = <any>undefined;
 
     recv_idlist(): number[]
     {
@@ -129,13 +129,8 @@ abstract class Generic_84P extends Calc
         };
     }
 
-    recv_var_ns(mode: CalcMode): { content: FileContent; vr: VarRequest }
-    {
-        return {
-            content: undefined,
-            vr: undefined
-        };
-    }
+    // Not supported by those models
+    recv_var_ns = <any>undefined;
 
     rename_var(oldname: VarRequest, newname: VarRequest): void
     {
@@ -153,9 +148,8 @@ abstract class Generic_84P extends Calc
     {
     }
 
-    send_cert(content: FlashContent): void
-    {
-    }
+    // Not supported by those models
+    send_cert = <any>undefined;
 
     send_key(key: number): void
     {
@@ -169,30 +163,84 @@ abstract class Generic_84P extends Calc
     {
     }
 
-    send_var_ns(mode: CalcMode, content: FileContent): void
-    {
-    }
+    // Not supported by those models
+    send_var_ns = <any>undefined;
 
     set_clock(clock: CalcClock): void
     {
     }
 }
 
-export default class Calc_84P extends Generic_84P
+// TI-82 Advanced, TI-84 Plus T
+abstract class Generic_ExamRestricted_84 extends Generic_84P
 {
-    readonly model       = CalcModel.CALC_TI84P;
-    readonly name        = "TI84+";
-    readonly fullname    = "TI-84 Plus";
-    readonly description = "TI-84 Plus thru DirectLink";
-
-    readonly features = Feat.OPS_ISREADY | Feat.OPS_SCREEN  | Feat.OPS_DIRLIST | Feat.OPS_VARS   | Feat.OPS_FLASH  |
-                        Feat.OPS_OS      | Feat.OPS_IDLIST  | Feat.OPS_ROMDUMP | Feat.OPS_CLOCK  | Feat.OPS_DELVAR |
-                        Feat.OPS_VERSION | Feat.OPS_BACKUP  | Feat.OPS_KEYS    | Feat.OPS_RENAME | Feat.OPS_CHATTR |
-                        Feat.FTS_SILENT  | Feat.FTS_MEMFREE | Feat.FTS_FLASH;
-
-    readonly product_id = CalcProductIDs.PRODUCT_ID_TI84P;
+    // Those have ASM support removed, and cannot receive Flash apps (they are built into the OS)
+    readonly features = super.features & ~(Feat.OPS_FLASH | Feat.OPS_ROMDUMP);
 }
 
-// TODO: add more calcs
+// TI-83 Premium CE, TI-84 Plus CE(-T)
+abstract class Generic_CE extends Generic_84P
+{
+    readonly features = super.features & ~Feat.OPS_IDLIST;
+
+    // Not supported by those models
+    recv_backup = <any>undefined;
+    recv_idlist = <any>undefined;
+}
+
+export class Calc_84P extends Generic_84P
+{
+    readonly model       = CalcModel.CALC_TI84P_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI84P;
+    readonly name        = "TI84+";
+    readonly fullname    = "TI-84 Plus";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
+export class Calc_84PCSE extends Generic_84P
+{
+    readonly model       = CalcModel.CALC_TI84PC_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI84PCSE;
+    readonly name        = "TI84+CSE";
+    readonly fullname    = "TI-84 Plus C Silver Edition";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
+export class Calc_83PCE extends Generic_CE
+{
+    readonly model       = CalcModel.CALC_TI83PCE_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI83PCE;
+    readonly name        = "TI83PCE";
+    readonly fullname    = "TI-83 Premium CE";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
+export class Calc_84PCE extends Generic_CE
+{
+    readonly model       = CalcModel.CALC_TI84PCE_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI84PCE;
+    readonly name        = "TI84+CE";
+    readonly fullname    = "TI-84 Plus CE";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
+export class Calc_82A extends Generic_ExamRestricted_84
+{
+    readonly model       = CalcModel.CALC_TI82A_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI82A;
+    readonly name        = "TI82A";
+    readonly fullname    = "TI-82 Advanced";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
+export class Calc_84PT extends Generic_ExamRestricted_84
+{
+    readonly model       = CalcModel.CALC_TI84PT_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI84PT;
+    readonly name        = "TI84+T";
+    readonly fullname    = "TI-84 Plus T";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
 
 console.log("libcalcs/calc_84p loaded");
