@@ -613,11 +613,11 @@ export enum CalcModel
 export abstract class Calc
 {
     abstract readonly model: CalcModel;
+    abstract readonly product_id: CalcProductIDs;
     abstract readonly name: string;
     abstract readonly fullname: string;
     abstract readonly description: string;
     abstract readonly features: number;
-    abstract readonly product_id: CalcProductIDs;
 
     updat: CalcUpdate   = <any>undefined;
 
@@ -648,7 +648,7 @@ export abstract class Calc
     abstract is_ready(): boolean;
     abstract send_key(key: number): void;
     abstract execute(varEntry: VarEntry, args: string): void;
-    abstract recv_screen(sc: CalcScreenCoord): number[][];
+    abstract recv_screen(): ({ sc: CalcScreenCoord, bitmap: number[][] });
     abstract get_dirlist(): ({ vars: any, apps: any });
     abstract get_memfree(): ({ ram: any, flash: any });
     abstract send_backup(content: BackupContent): void;

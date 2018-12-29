@@ -113,9 +113,12 @@ abstract class Generic_84P extends Calc
         return [];
     }
 
-    recv_screen(sc: CalcScreenCoord): number[][]
+    recv_screen(): { sc: CalcScreenCoord, bitmap: number[][] }
     {
-        return [];
+        return {
+            sc: <any>undefined,
+            bitmap: [[]]
+        }
     }
 
     recv_var(mode: CalcMode): { content: FileContent; vr: VarRequest }
