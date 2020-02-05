@@ -19,8 +19,12 @@
 */
 
 import {
-    Calc, CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock, CalcUpdate, CalcInfos
+    CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock, CalcUpdate, CalcInfos
 } from './libcalcs';
+
+import {
+    DUSBCalc, Consts as DUSBConsts
+} from "./dusb_calc";
 
 import {
     BackupContent, FileAttr, FileContent, FlashContent, VarEntry, VarRequest
@@ -31,7 +35,7 @@ import {
 } from '../libcables/libcables';
 
 // TODO: implement me
-abstract class Generic_84P extends Calc
+abstract class Generic_84P extends DUSBCalc
 {
     readonly features = Feat.OPS_ISREADY | Feat.OPS_SCREEN  | Feat.OPS_DIRLIST | Feat.OPS_VARS   | Feat.OPS_FLASH  |
                         Feat.OPS_OS      | Feat.OPS_IDLIST  | Feat.OPS_ROMDUMP | Feat.OPS_CLOCK  | Feat.OPS_DELVAR |
@@ -151,8 +155,16 @@ abstract class Generic_84P extends Calc
     // Not supported by those models
     send_cert = <any>undefined;
 
+    private send_key_noack(key: number): void
+    {
+        this.dusb_cmd_s_execute("", "", DUSBConsts.EID_KEY, "", key);
+        this.dusb_cmd_r_delay_ack();
+    }
+
     send_key(key: number): void
     {
+        this.send_key_noack(key);
+        this.dusb_cmd_r_data_ack();
     }
 
     send_os(content: FileContent): void
