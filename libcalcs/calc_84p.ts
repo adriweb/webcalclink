@@ -227,6 +227,15 @@ export class Calc_83PCE extends Generic_CE
     readonly description = this.fullname + " thru DirectLink";
 }
 
+export class Calc_83PCEEP extends Generic_CE
+{
+    readonly model       = CalcModel.CALC_TI83PCE_USB;
+    readonly product_id  = CalcProductIDs.PRODUCT_ID_TI83PCE;
+    readonly name        = "TI83PCEEP";
+    readonly fullname    = "TI-83 Premium CE Edition Python";
+    readonly description = this.fullname + " thru DirectLink";
+}
+
 export class Calc_84PCE extends Generic_CE
 {
     readonly model       = CalcModel.CALC_TI84PCE_USB;
