@@ -22,12 +22,7 @@ function chunk_buffer(data)
 
 function findOrCreateDevice(rawDevice)
 {
-    let device = webusb.getDevice(rawDevice);
-    if (device === undefined)
-    {
-        device = new webusb.Device(rawDevice);
-    }
-    return device;
+    return webusb.getDevice(rawDevice) || (new webusb.Device(rawDevice));
 }
 
 (function ()
