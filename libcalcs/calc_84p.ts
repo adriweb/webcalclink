@@ -19,7 +19,7 @@
 */
 
 import {
-    CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock, CalcUpdate, CalcInfos
+    CalcModel, CalcFeatures as Feat, CalcProductIDs, CalcScreenCoord, CalcMode, CalcDumpSize, CalcClock, CalcUpdate, CalcInfos, CalcLabEquipmentData
 } from './libcalcs';
 
 import {
@@ -97,6 +97,15 @@ abstract class Generic_84P extends DUSBCalc
     new_fld = <any>undefined;
 
     recv_all_vars_backup(): FileContent
+    {
+        return <any>undefined;
+    }
+
+    send_lab_equipment_data(model: CalcModel, data: CalcLabEquipmentData): void
+    {
+    }
+
+    get_lab_equipment_data(model: CalcModel): CalcLabEquipmentData
     {
         return <any>undefined;
     }

@@ -138,9 +138,9 @@ export enum CalcProductIDs
     PRODUCT_ID_TI73             = 0x02,
     PRODUCT_ID_TI89             = 0x03,
     PRODUCT_ID_TI83P            = 0x04,
-    // No known calculator uses 0x05
-    // No known calculator uses 0x06
-    // No known calculator uses 0x07
+    PRODUCT_ID_CBL2             = 0x05,
+    PRODUCT_ID_LABPRO           = 0x06,
+    PRODUCT_ID_TIPRESENTER      = 0x07,
     PRODUCT_ID_TIV200           = 0x08,
     PRODUCT_ID_TI89T            = 0x09,
     PRODUCT_ID_TI84P            = 0x0A,
@@ -183,6 +183,7 @@ export enum CalcFeatures
     OPS_OS          = (1 << 13),
     OPS_RENAME      = (1 << 14),
     OPS_CHATTR      = (1 << 21),
+    OPS_LABEQUIPMENTDATA  = (1 << 23),
 
     FTS_SILENT      = (1 << 15),
     FTS_FOLDER      = (1 << 16),
@@ -212,32 +213,34 @@ export enum CalcAction
  **/
 export enum InfosMask
 {
-    INFOS_PRODUCT_NUMBER = (1 << 0), /* obsolete (never used) */
-    INFOS_PRODUCT_NAME   = (1 << 1),
-    INFOS_MAIN_CALC_ID   = (1 << 2), /* obsolete, replaced by INFOS_PRODUCT_ID */
-    INFOS_HW_VERSION     = (1 << 3),
-    INFOS_LANG_ID        = (1 << 4),
-    INFOS_SUB_LANG_ID    = (1 << 5),
-    INFOS_DEVICE_TYPE    = (1 << 6),
-    INFOS_BOOT_VERSION   = (1 << 7),
-    INFOS_OS_VERSION     = (1 << 8),
-    INFOS_RAM_PHYS       = (1 << 9),
-    INFOS_RAM_USER       = (1 << 10),
-    INFOS_RAM_FREE       = (1 << 11),
-    INFOS_FLASH_PHYS     = (1 << 12),
-    INFOS_FLASH_USER     = (1 << 13),
-    INFOS_FLASH_FREE     = (1 << 14),
-    INFOS_LCD_WIDTH      = (1 << 15),
-    INFOS_LCD_HEIGHT     = (1 << 16),
-    INFOS_BATTERY        = (1 << 17),
-    INFOS_BOOT2_VERSION  = (1 << 18),
-    INFOS_RUN_LEVEL      = (1 << 19),
-    INFOS_BPP            = (1 << 20),
-    INFOS_CLOCK_SPEED    = (1 << 21),
-    INFOS_PRODUCT_ID     = (1 << 22),
-    INFOS_EXACT_MATH     = (1 << 23),
-    INFOS_CLOCK_SUPPORT  = (1 << 24),
-    INFOS_COLOR_SCREEN   = (1 << 25),
+    INFOS_PRODUCT_NUMBER  = (1 << 0), /* obsolete (never used) */
+    INFOS_PRODUCT_NAME    = (1 << 1),
+    INFOS_MAIN_CALC_ID    = (1 << 2), /* obsolete, replaced by INFOS_PRODUCT_ID */
+    INFOS_HW_VERSION      = (1 << 3),
+    INFOS_LANG_ID         = (1 << 4),
+    INFOS_SUB_LANG_ID     = (1 << 5),
+    INFOS_DEVICE_TYPE     = (1 << 6),
+    INFOS_BOOT_VERSION    = (1 << 7),
+    INFOS_OS_VERSION      = (1 << 8),
+    INFOS_RAM_PHYS        = (1 << 9),
+    INFOS_RAM_USER        = (1 << 10),
+    INFOS_RAM_FREE        = (1 << 11),
+    INFOS_FLASH_PHYS      = (1 << 12),
+    INFOS_FLASH_USER      = (1 << 13),
+    INFOS_FLASH_FREE      = (1 << 14),
+    INFOS_LCD_WIDTH       = (1 << 15),
+    INFOS_LCD_HEIGHT      = (1 << 16),
+    INFOS_BATTERY         = (1 << 17),
+    INFOS_BOOT2_VERSION   = (1 << 18),
+    INFOS_RUN_LEVEL       = (1 << 19),
+    INFOS_BPP             = (1 << 20),
+    INFOS_CLOCK_SPEED     = (1 << 21),
+    INFOS_PRODUCT_ID      = (1 << 22),
+    INFOS_EXACT_MATH      = (1 << 23),
+    INFOS_CLOCK_SUPPORT   = (1 << 24),
+    INFOS_COLOR_SCREEN    = (1 << 25),
+    INFOS_PYTHON_ON_BOARD = (1 << 26),
+    INFOS_USER_DEFINED_ID = (1 << 27),
 
     // INFOS_MORE_INFOS     = (1 << 30), /* Some day ? Reserved value for signaling more bits are available elsewhere */
     INFOS_CALC_MODEL     = 0x80000000
@@ -279,6 +282,8 @@ export enum CalcFnctsIdx
     FNCT_CHATTR,
     FNCT_SEND_ALL_VARS_BACKUP,
     FNCT_RECV_ALL_VARS_BACKUP,
+    FNCT_SEND_LAB_EQUIPMENT_DATA,
+    FNCT_GET_LAB_EQUIPMENT_DATA,
     FNCT_LAST // Keep this one last
 }
 
@@ -444,6 +449,35 @@ export type CalcClock =
 }
 
 /**
+ * CalcLabEquipmentDataType:
+ *
+ * An enumeration which contains the following list data types:
+ */
+export enum CalcLabEquipmentDataType
+{
+    CALC_LAB_EQUIPMENT_DATA_TYPE_NONE = 0,
+    CALC_LAB_EQUIPMENT_DATA_TYPE_STRING = 1,
+    CALC_LAB_EQUIPMENT_DATA_TYPE_TI68K_RAW_LIST = 2,
+    CALC_LAB_EQUIPMENT_DATA_TYPE_TIZ80_RAW_LIST = 3,
+}
+
+/**
+ * CalcLabEquipmentData:
+ * @size: size of data to be sent
+ * @data: pointer to data to be sent
+ */
+export type CalcLabEquipmentData =
+{
+    type: CalcLabEquipmentDataType;
+    size: number;
+    items: number;
+    data: number[];
+    index: number;
+    unknown: number;
+    vartype: number;
+}
+
+/**
  * CalcUpdate:
  * @text: a text to display about the current operation (locale used is those defined by tifiles_transcoding_set)
  * @cancel: set to 1 if transfer have to be cancelled
@@ -531,6 +565,8 @@ export type CalcInfos =
     exact_math: number;
     clock_support: number;
     color_screen: number;
+    python_on_board: number;
+    user_defined_id: string;
 }
 
 /**
@@ -559,6 +595,8 @@ export enum CalcModel
     CALC_TI89, CALC_TI89T, CALC_TI92, CALC_TI92P, CALC_V200,
     CALC_TI84P_USB, CALC_TI89T_USB, CALC_NSPIRE, CALC_TI80,
     CALC_TI84PC, CALC_TI84PC_USB, CALC_TI83PCE_USB, CALC_TI84PCE_USB, CALC_TI82A_USB, CALC_TI84PT_USB,
+    CALC_NSPIRE_CRADLE, CALC_NSPIRE_CXII,
+    CALC_CBL, CALC_CBR, CALC_CBL2, CALC_CBR2, CALC_LABPRO, CALC_TIPRESENTER,
     CALC_MAX
 }
 
@@ -674,6 +712,8 @@ export abstract class Calc
     abstract change_attr(vr: VarRequest, attr: FileAttr): void;
     abstract send_all_vars_backup(content: FileContent): void;
     abstract recv_all_vars_backup(): FileContent;
+    abstract send_lab_equipment_data(model: CalcModel, data: CalcLabEquipmentData): void;
+    abstract get_lab_equipment_data(model: CalcModel): CalcLabEquipmentData;
 }
 
 console.log("libcalcs loaded");
