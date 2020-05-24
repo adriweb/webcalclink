@@ -132,7 +132,7 @@ function findOrCreateDevice(rawDevice)
     webusb.Device.prototype.connect = async function ()
     {
         await this.device_.open();
-        await this.device_.selectConfiguration(1);
+        await this.device_.selectConfiguration(this.device_.configurations[0].configurationValue);
 
         const iface = this.device_.configuration.interfaces[0];
         await this.device_.claimInterface(iface.interfaceNumber);
