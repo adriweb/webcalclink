@@ -11,10 +11,10 @@ Maybe in the future it will get less crappy. We'll see.
 - Do stuff
 
 ##### Compatibility:
-This has been tested with Chrome v62 under:
- - **macOS 10.13**: works fine without any additional setup
+This has been tested with multiple Chrome/Chromium/Edge under:
+ - **macOS 10.13**: works fine
  - **Linux (Fedora)**: works fine once Chrome is allowed to talk to the USB device (see [here](https://github.com/webusb/arduino/issues/29#issuecomment-299391705))
- - **Windows 10**: doesn't work yet. [This](https://bugs.chromium.org/p/chromium/issues/detail?id=637404) might help once it's done.
+ - **Windows 10/11**: works fine
 
 ## Credits
 
